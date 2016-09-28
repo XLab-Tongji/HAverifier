@@ -1,0 +1,40 @@
+---
+# test case: list all servers by call http   
+# by MaAoyu 
+
+schema: "yardstick:task:0.1"
+
+scenarios:
+-
+  type: "general_scenario"
+  options:
+    operations:
+        -
+          operation_type: "http-operation"
+          key: "list_servers"
+          action_parameter:
+            url: "192.168.0.2:35357"
+            service: "servers"
+    steps:
+      -
+        actionKey: "list_servers"
+        actionType: "operation"
+        index: 0
+
+  nodes:
+    node1: node1.LF
+    node2: node2.LF
+    node3: node3.LF
+  runner:
+    type: Duration
+    duration: 1
+  sla:
+    outage_time: 5
+    action: monitor
+
+context:
+  type: Node
+  name: LF
+  file: /etc/haverifier/pod.yaml
+
+

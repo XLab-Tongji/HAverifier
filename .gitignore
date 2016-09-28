@@ -1,0 +1,7 @@
+# file
+*.pyc
+
+# directory
+build/
+dist/
+haverifier.egg-info/

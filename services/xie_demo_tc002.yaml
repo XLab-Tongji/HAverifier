@@ -1,0 +1,81 @@
+---
+# Scenario case for haproxy HA
+
+schema: "yardstick:task:0.1"
+scenarios:
+  -
+    type: "general_scenario"
+    options:
+      attackers:
+        -
+          fault_type: "general-attacker"
+          host: node2
+          key: "remove-file"
+          actionParameter:
+            serviceName: "haproxy"
+            filePath: "/etc/haproxy/haproxy.cfg"
+          rollbackParameter:
+            serviceName: "haproxy"
+            filePath: "/etc/haproxy/haproxy.cfg"
+        -
+          fault_type: "general-attacker"
+          host: node2
+          key: "stop_service"
+          actionParameter: 
+            serviceName: "nova-api"
+          rollbackParameter:
+            serviceName: "nova-api"
+
+      operations:
+        -
+           key: "operation_001"
+           operation_type: "general-operation"
+           host: node2
+           actionParameter:
+             flavorname: "test"
+             flavorid: "test-001"
+             ram: 100
+             disk: 1
+             vcpus: 1
+           rollbackParameter:
+             flavorid: "test-001"
+
+      resultCheckers:
+        -
+          key: "nova-flavor-checker"
+          host: node2
+          checker_type: "general-result-checker"
+          expectedValue: "test-001"
+          condition: "in"
+
+      steps:
+        -
+          actionKey: remove-file
+          actionType: "attacker"
+          index: 0
+        -
+          actionKey: stop_service
+          actionType: "attacker"
+          index: 1
+        -
+          actionKey: operation_001
+          actionType: "operation"
+          index: 2
+        -
+          actionKey: nova-flavor-checker
+          actionType: "resultchecker"
+          index: 3
+
+    nodes:
+      node2: node2.LF
+    runner:
+      type: Duration
+      duration: 1
+    sla:
+      outage_time: 5
+      action: monitor
+
+context:
+  type: Node
+  name: LF
+  file: /etc/haverifier/pod.yaml

@@ -1,0 +1,52 @@
+---
+# Scenario case for rabbitmq crash
+
+schema: "yardstick:task:0.1"
+scenarios:
+  -
+    type: "general_scenario"
+    options:
+      attackers:
+        -
+          fault_type: "general-attacker"
+          key: "kill-process-rollbackby-pacemaker"
+          host: node1
+          actionParameter:
+            processName: "neutron-dhcp-agent"
+          rollbackParameter:
+            resource: "p_neutron-dhcp-agent"
+
+      monitors:
+        -
+           monitor_type: "general-monitor"
+           key: "process-exist"
+           host: node1
+           monitor_time: 10
+           sla:
+             max_recover_time: 5
+           parameter:
+             processName: "neutron-dhcp-agent"
+
+      steps:
+        -
+          actionKey: "process-exist"
+          actionType: "monitor"
+          index: 1
+        -
+          actionKey: "kill-process-rollbackby-pacemaker"
+          actionType: "attacker"
+          index: 2
+
+    nodes:
+      node1: node1.LF
+    runner:
+      type: Duration
+      duration: 1
+    sla:
+      outage_time: 5
+      action: monitor
+
+context:
+  type: Node
+  name: LF
+  file: /etc/haverifier/pod.yaml

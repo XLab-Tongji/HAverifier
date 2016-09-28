@@ -1,0 +1,63 @@
+---
+# Scenario case for nova consoleauth consisitency
+
+schema: "yardstick:task:0.1"
+scenarios:
+  -
+    type: "general_scenario"
+    options:
+      attackers:
+        -
+          fault_type: "general-attacker"
+          host: node1
+          key: "stop_service"
+          parameter:
+            processName: "nova-schedule"
+
+      operations:
+        -
+           key: "operation_001"
+           operation_type: "nova-create-flavor"
+           host: node1
+           parameter:
+             flavorid: "test-002"
+             flavorname: "test"
+             ram: 100
+             disk: 1
+             vcpus: 1
+      resultCheckers:
+        -
+          key: "resultChecker_001"
+          host: node1
+          checker_type: "nova-flavor-checker"
+          expectedValue: "test-002"
+          condition: "in"
+
+      steps:
+        -
+          actionKey: operation_001
+          actionType: "operation"
+          index: 0
+
+        -
+          actionKey: stop_service
+          actionType: "attacker"
+          index: 1
+        -
+          actionKey: "resultChecker_001"
+          actionType: "resultchecker"
+          index: 2
+
+    nodes:
+      node1: node1.LF
+    runner:
+      type: Duration
+      duration: 1
+    sla:
+      outage_time: 5
+      action: monitor
+
+context:
+  type: Node
+  name: LF
+  file: /etc/haverifier/pod.yaml

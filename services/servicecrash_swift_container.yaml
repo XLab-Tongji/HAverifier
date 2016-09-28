@@ -1,0 +1,34 @@
+---
+# Sample test case for ha- remove configure files   
+
+schema: "yardstick:task:0.1"
+
+scenarios:
+-
+  type: ServiceHA
+  options:
+    attackers:
+    - fault_type: "swift-service"
+      service_name: "swift-container"
+      host: node3
+    monitors:
+    - monitor_type: "swift-monitor-function"
+      command_name: "ha_tools/swift/check_swift_status.bash"
+      monitor_time: 10
+      host: node3
+      sla:
+        max_outage_time: 5
+
+  nodes:
+    node3: node3.LF
+  runner:
+    type: Duration
+    duration: 1
+  sla:
+    outage_time: 5
+    action: monitor
+
+context:
+  type: Node
+  name: LF
+  file: /etc/haverifier/pod.yaml

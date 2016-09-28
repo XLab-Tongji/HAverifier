@@ -1,0 +1,49 @@
+---
+# sample config file for ha test
+#
+schema: "yardstick:task:0.1"
+
+general-result-checker:
+  verify_script: ha_tools/check_process_python.bash
+nova-flavor-checker:
+  verify_script: ha_tools/nova/show_flavors.bash
+resultChecker_001:
+  verify_script: ha_tools/check_process_python.bash
+resultChecker_002:
+  verify_script: ha_tools/check_service.bash
+check_file_exit:
+  verify_script: ha_tools/file/check_file_exit.bash
+check_file_content:
+  verify_script: ha_tools/file/print_file_content.bash
+nova-instance-checker:
+  verify_script: ha_tools/nova/show_instances.bash
+nova-get-vnc:
+  verify_script: ha_tools/nova/get_vnc_address.bash 
+nova-floatingip-checker:
+  verify_script: ha_tools/nova/nova_floatingip_list.bash
+neutron-subnet-checker:
+  verify_script: ha_tools/neutron/subnet_list.bash
+file-permission-checker:
+  verify_script: ha_tools/file/show_file_permission.bash
+neutron-subnet-checker:
+  verify_script: ha_tools/neutron/net_list.bash
+nova-image-list:
+  verify_script: ha_tools/nova/show_images.bash
+cinder-volume-list:
+  verify_script: ha_tools/cinder/volume_list.bash
+keystone-user-list:
+  verify_script: ha_tools/keystone/show_user.bash
+ceph-volume-list:
+  verify_script: ha_tools/ceph/ceph_list_volume.bash
+nova-instance-checker-2:
+  verify_script: ha_tools/nova/show_instances.bash
+nova-floatingip-checker-2:
+  verify_script: ha_tools/nova/nova_floatingip_list.bash
+keypair-checker:
+  verify_script: ha_tools/nova/keypair_list.bash
+swift-list:
+  verify_script: ha_tools/swift/list.bash
+ceilometer-alarm-list:
+  verify_script: ha_tools/ceilometer/alarm_list.bash
+
+  

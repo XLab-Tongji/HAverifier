@@ -1,0 +1,54 @@
+---
+# Scenario case for hapoxy process crash
+
+schema: "yardstick:task:0.1"
+scenarios:
+  -
+    type: "general_scenario"
+    options:
+      attackers:
+        -
+          fault_type: "general-attacker"
+          host: node1
+          key: "shutdown-vip"
+          actionParameter:
+            resourceName: "vip__public"
+            interfaceName: "b_public"
+            netNamespace: "haproxy"
+          rollbackParameter:
+            resourceName: "vip__public"
+
+      monitors:
+        -
+           monitor_type: "general-monitor"
+           key: "ip_status"
+           host: node1
+           monitor_time: 10
+           sla:
+             max_recover_time: 5
+           parameter:
+             ipAddress: "172.16.0.3"
+
+      steps:
+        -
+          actionKey: "ip_status"
+          actionType: "monitor"
+          index: 1
+        -
+          actionKey: "shutdown-vip"
+          actionType: "attacker"
+          index: 2
+
+    nodes:
+      node1: node1.LF
+    runner:
+      type: Duration
+      duration: 1
+    sla:
+      outage_time: 5
+      action: monitor
+
+context:
+  type: Node
+  name: LF
+  file: /etc/haverifier/pod.yaml

@@ -1,0 +1,48 @@
+#case to blocking 5000 port to test ha 
+---   
+
+schema: "yardstick:task:0.1"
+
+scenarios:
+-
+  type: ServiceHA
+  options:
+    attackers:
+    -    
+      fault_type: "general-attacker"
+      host: node1
+      key: "blocking_port"
+      action_Parameter:
+        portname: "5000"
+      rollbackParameter:
+        portname_rec: "5000"
+
+    monitors:
+    - 
+      monitor_type: "openstack-cmd"
+      command_name: "nova image-list"
+      monitor_time: 10
+      sla: 
+        max_outage_time: 5
+
+
+    steps:
+        -
+          actionKey: blocking_port
+          actionType: "attacker"
+          index: 0
+        
+
+  nodes:
+    node1: node1.LF
+  runner:
+    type: Duration
+    duration: 1
+  sla:
+    outage_time: 5
+    action: monitor
+
+context:
+  type: Node
+  name: LF
+  file: /etc/haverifier/pod.yaml

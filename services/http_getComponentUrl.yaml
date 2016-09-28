@@ -1,0 +1,40 @@
+---
+# test case for directly call api   
+# by MaAoyu 
+
+schema: "yardstick:task:0.1"
+
+scenarios:
+-
+  type: "general_scenario"
+  options:
+    operations:
+        -
+          operation_type: "http-operation-dirt"
+          key: "get_dirt"
+          action_parameter:
+            url: "192.168.0.2:35357"
+            component: "nova"
+    steps:
+      -
+        actionKey: "get_dirt"
+        actionType: "operation"
+        index: 0
+
+  nodes:
+    node1: node1.LF
+    node2: node2.LF
+    node3: node3.LF
+  runner:
+    type: Duration
+    duration: 1
+  sla:
+    outage_time: 5
+    action: monitor
+
+context:
+  type: Node
+  name: LF
+  file: /etc/haverifier/pod.yaml
+
+

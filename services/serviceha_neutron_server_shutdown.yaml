@@ -1,0 +1,33 @@
+---
+# Sample test case for ha- remove configure files
+
+schema: "yardstick:task:0.1"
+
+scenarios:
+-
+  type: ServiceHA
+  options:
+    attackers:
+    - fault_type: "change-configfile"
+      conf_name: "/etc/nova/nova.conf"
+      match_content_to_modify: "connection=mysql"
+      content_to_modify: "connection=xxx"
+      host: node1
+    monitors:
+    - monitor_cmd: "nova service-list"
+      monitor_time: 10
+  nodes:
+    node1: node1.LF
+  runner:
+    type: Duration
+    duration: 1
+  sla:
+    outage_time: 5
+    action: monitor
+
+context:
+  type: Node
+  name: LF
+  file: /etc/haverifier/pod.yaml
+
+

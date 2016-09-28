@@ -1,0 +1,52 @@
+---
+# Scenario case for hapoxy process crash
+
+schema: "yardstick:task:0.1"
+scenarios:
+  -
+    type: "general_scenario"
+    options:
+      attackers:
+        -
+          fault_type: "general-attacker"
+          host: node1
+          key: "stop_service"
+          actionParameter:
+            processName: "ntp"
+          rollbackParameter:
+            processName: "ntp"
+
+      monitors:
+        -
+           monitor_type: "general-monitor"
+           key: "service_status"
+           host: node1
+           monitor_time: 10
+           sla:
+             max_recover_time: 5
+           parameter:
+             serviceName: "ntp"
+
+      steps:
+        -
+          actionKey: "service_status"
+          actionType: "monitor"
+          index: 1
+        -
+          actionKey: "stop_service"
+          actionType: "attacker"
+          index: 2
+
+    nodes:
+      node1: node1.LF
+    runner:
+      type: Duration
+      duration: 1
+    sla:
+      outage_time: 5
+      action: monitor
+
+context:
+  type: Node
+  name: LF
+  file: /etc/haverifier/pod.yaml

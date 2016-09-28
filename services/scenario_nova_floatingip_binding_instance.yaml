@@ -1,0 +1,103 @@
+---
+# Scenario case for nova floating ip binding
+
+schema: "yardstick:task:0.1"
+scenarios:
+  -
+    type: "general_scenario"
+    options:
+
+      operations:
+        -
+           key: "operation_001"
+           operation_type: "nova-create-floatingip"
+           host: node1
+           parameter:
+             network: "admin_floating_net"
+           returnValue:
+             floatingip: "@_@floatingip1"
+        -
+           key: "echo_test"
+           operation_type: "general-operation"
+           host: node1
+           actionParameter:
+            echo: "@_@floatingip1"
+
+        -  
+           key: "nova-create-instance"
+           operation_type: "general-operation"
+           host: node1
+           actionParameter:
+             flavorname: "m1.micro"
+             imagename: "TestVM"
+             netID: 68ec05de-43b7-45e3-bcf5-da5318a9dad4
+             instancename: "test-001"
+           rollbackParameter:
+             instancename: "test-001"
+
+        -  
+           key: "nova-associate-floatingip"
+           operation_type: "general-operation"
+           host: node1
+           actionParameter:
+             instancename: "test-001"
+             floatingip: "@_@floatingip1" 
+           rollbackParameter:
+             instancename: "test-001"
+             floatingip: "@_@floatingip1"
+
+      resultCheckers:
+        -
+          key: "nova-floatingip-checker"
+          host: node1
+          checker_type: "general-result-checker"
+          expectedValue: "@_@floatingip1"
+          condition: "in"
+        -
+          key: "nova-instance-checker"
+          host: node1
+          checker_type: "general-result-checker"
+          expectedValue: "test-001"
+          condition: "in"
+
+
+      steps:
+        -
+          actionKey: operation_001
+          actionType: "operation"
+          index: 0
+        -
+          actionKey: echo_test
+          actionType: "operation"
+          index: 1
+
+        -
+          actionKey: nova-create-instance
+          actionType: "operation"
+          index: 2
+        -
+          actionKey: nova-associate-floatingip
+          actionType: "operation"
+          index: 3
+        -
+          actionKey: nova-instance-checker
+          actionType: "resultchecker"
+          index: 4
+        -
+          actionKey: nova-floatingip-checker
+          actionType: "resultchecker"
+          index: 5
+
+    nodes:
+      node1: node1.LF
+    runner:
+      type: Duration
+      duration: 1
+    sla:
+      outage_time: 5
+      action: monitor
+
+context:
+  type: Node
+  name: LF
+  file: /etc/haverifier/pod.yaml

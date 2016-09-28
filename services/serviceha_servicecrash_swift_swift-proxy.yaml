@@ -1,0 +1,32 @@
+---
+# Sample test case for ha- remove configure files   
+
+schema: "yardstick:task:0.1"
+
+scenarios:
+-
+  type: ServiceHA
+  options:
+    attackers:
+    - fault_type: "kill-process"
+      process_name: "swift-init proxy"
+      host: node1
+    monitors:
+    - monitor_cmd: "swift stat"
+      monitor_time: 10
+      host: node3
+  nodes:
+    node1: node1.LF
+  runner:
+    type: Duration
+    duration: 1
+  sla:
+    outage_time: 5
+    action: monitor
+
+context:
+  type: Node
+  name: LF
+  file: /etc/haverifier/pod.yaml
+
+

@@ -1,0 +1,4 @@
+#!/bin/bash
+# Crash the system immediately by create a NULL Pointer.
+
+echo c > /proc/sysrq-trigger

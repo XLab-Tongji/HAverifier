@@ -1,0 +1,40 @@
+---
+# Sample test case for ha- remove configure files
+
+schema: "yardstick:task:0.1"
+
+
+scenarios:
+-
+  type: ServiceHA
+  options:
+    attackers:
+    - fault_type: "remove-file"
+      process_name: "keystone"
+      conf_name: "/etc/haproxy/conf.d/020-keystone-1.cfg"
+      host: node1
+    - fault_type: "remove-file"
+      process_name: "keystone"
+      conf_name: "/etc/haproxy/conf.d/020-keystone-2.cfg"
+      host: node1
+    monitors:
+    - monitor_type: "openstack-cmd"
+      command_name: "keystone user-list"
+      monitor_time: 10
+      sla:
+        max_outage_time: 5
+  nodes:
+    node1: node1.LF
+  runner:
+    type: Duration
+    duration: 1
+  sla:
+    outage_time: 5
+    action: monitor
+
+context:
+  type: Node
+  name: LF
+  file: /etc/haverifier/pod.yaml
+
+

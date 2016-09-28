@@ -1,0 +1,122 @@
+---
+# sample config file for ha test
+#
+schema: "yardstick:task:0.1"
+
+general-operation:
+  action_script: ha_tools/check_process_python.bash
+  rollback_script: ha_tools/check_process_python.bash
+operation001:
+  action_script: ha_tools/check_process_python.bash
+  rollback_script: ha_tools/check_process_python.bash
+nova-create-flavor: 
+  action_script: ha_tools/nova/create_flavor.bash
+  rollback_script: ha_tools/nova/delete_flavor.bash
+nova-create-floatingip:
+  action_script: ha_tools/nova/create_floatingip.bash
+  rollback_script: ha_tools/nova/delete_floatingip.bash
+create_file:
+  action_script: ha_tools/file/create_file.bash
+  rollback_script: ha_tools/file/remove_file.bash
+swift_upload_file:
+  action_script: ha_tools/swift/upload.bash
+  rollback_script: ha_tools/swift/delete.bash
+swift_upload_file_2:
+  action_script: ha_tools/swift/upload.bash
+  rollback_script: ha_tools/swift/delete.bash
+download_swift_file:
+  action_script: ha_tools/swift/download.bash
+  rollback_script: ha_tools/file/remove_file.bash
+download_swift_file_2:
+  action_script: ha_tools/swift/download.bash
+  rollback_script: ha_tools/file/remove_file.bash
+append_text_to_file:
+  action_script: ha_tools/file/append_text_to_file.bash
+  rollback_script: ha_tools/file/flush_file_content.bash
+operation_001:
+  action_script: ha_tools/nova/create_flavor.bash
+  rollback_script: ha_tools/nova/delete_flavor.bash
+nova-create-instance: 
+  action_script: ha_tools/nova/create_instance_from_image.bash
+  rollback_script: ha_tools/nova/delete_instance.bash
+nova-create-instance-2: 
+  action_script: ha_tools/nova/create_instance_from_image.bash
+  rollback_script: ha_tools/nova/delete_instance.bash
+neutron-create-subnet:
+  action_script: ha_tools/neutron/create_subnet.bash
+  rollback_script: ha_tools/neutron/delete_subnet.bash
+nova-associate-floatingip:
+  action_script: ha_tools/nova/associate_floatingip.bash
+  rollback_script: ha_tools/nova/disassociate_floating_ip.bash
+nova-associate-floatingip-2:
+  action_script: ha_tools/nova/associate_floatingip.bash
+  rollback_script: ha_tools/nova/disassociate_floating_ip.bash
+file-change-permission:
+  action_script: ha_tools/file/change_permission.bash
+  rollback_script: ha_tools/file/recovery_permission.bash
+service-restart:
+  action_script: ha_tools/start_service.bash
+  rollback_script: ha_tools/start_service.bash
+neutorn-create-net:
+  action_script: ha_tools/neutron/create_network.bash
+  rollback_script: ha_tools/neutron/delete_net.bash
+nova-create-image:
+  action_script: ha_tools/nova/create_image.bash
+  rollback_script: ha_tools/nova/delete_image.bash
+nova-start-instance:
+  action_script: ha_tools/nova/start_instance.bash
+  rollback_script: ha_tools/nova/stop_instance.bash
+echo_test:
+  action_script: ha_tools/echo_test.bash
+  rollback_script: ha_tools/echo_test.bash
+cinder-create-volume:
+  action_script: ha_tools/cinder/create_volume.bash
+  rollback_script: ha_tools/cinder/remove_volume.bash
+cpu-overload:
+  action_script: ha_tools/cpu/cpu_overload.bash 
+  rollback_script: ha_tools/cpu/cpu_overload_recover.bash
+nova-create-floatingip:
+  action_script: ha_tools/nova/create_floatingip.bash
+  rollback_script: ha_tools/nova/delete_floatingip.bash
+nova-create-floatingip-2:
+  action_script: ha_tools/nova/create_floatingip.bash
+  rollback_script: ha_tools/nova/delete_floatingip.bash
+neutorn-create-router:
+  action_script: ha_tools/neutron/create_router.bash
+  rollback_script: ha_tools/neutron/delete_router.bash
+neutron-link-router-subnet:
+  action_script: ha_tools/neutron/link_router_subnet.bash
+  rollback_script: ha_tools/neutorn/delete_link_subnet.bash
+create-user:
+  action_script: ha_tools/keystone/create_user_simple.bash
+  rollback_script: ha_tools/keystone/delete_user.bash
+add-role:
+  action_script: ha_tools/keystone/add_role_tenant.bash
+  rollback_script: ha_tools/keystone/delete_user.bash
+nova-create-instance-key:
+  action_script: ha_tools/nova/create_instance_keypair.bash
+  rollback_script: ha_tools/nova/delete_instance.bash
+nova-create-instance-key-2:
+  action_script: ha_tools/nova/create_instance_keypair.bash
+  rollback_script: ha_tools/nova/delete_instance.bash
+nova-add-key:
+  action_script: ha_tools/nova/add_keypair.bash
+  rollback_script: ha_tools/nova/delete_keypair.bash
+ssh-operation:
+  action_script: ha_tools/instance/ssh_instance.bash
+  rollback_script: ha_tools/instance/echo.bash
+ssh-operation-2:
+  action_script: ha_tools/instance/ssh_instance.bash
+  rollback_script: ha_tools/instance/echo.bash
+create-swift-container:
+  inject_script: ha_tools/swift/post.bash
+  recovery_script: ha_tools/swift/delete.bash
+swift_delete_file:
+  action_script: ha_tools/swift/delete.bash
+  rollback_script: ha_tools/swift/upload.bash
+  
+  
+
+  
+
+

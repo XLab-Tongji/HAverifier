@@ -1,0 +1,92 @@
+---
+# ha test case for swift account-auditor   
+# by MaAoyu 
+
+schema: "yardstick:task:0.1"
+scenarios:
+-
+  type: "general_scenario"
+  options:
+    attackers:
+    - fault_type: "general-attacker"
+      host: node3
+      key: "stop_service"
+      action_parameter:
+            processName: "swift-account-auditor"
+      rollbackParameter:
+            processName: "swift-account-auditor"
+    operations:
+        -
+          operation_type: "general-operation"
+          host: node2
+          key: "swift_upload_file"
+          action_parameter:
+            container_name: "test_container"
+            file_name: "/etc/swift/swift.conf"
+          rollbackParameter:
+            container_name: "test_container"
+        -
+          operation_type: "general-operation"
+          host: node2
+          key: "download_swift_file"
+          action_parameter:
+            container_name: "test_container"
+            file_name: "etc/swift/swift.conf"
+          rollbackParameter:
+            file_name: "etc/swift/swift.conf"
+    monitors:
+        -
+           monitor_type: "general-monitor"
+           key: "swift_status"
+           host: node3
+           monitor_time: 10
+           sla:
+             max_recover_time: 5
+    resultCheckers:
+        -
+          key: "check_file_exit"
+          host: node2
+          checker_type: "general-result-checker"
+          expectedValue: 1
+          condition: "eq"
+          parameter:
+            file_name: "etc/swift/swift.conf"
+  
+    steps:
+      -
+        actionKey: "swift_status"
+        actionType: "monitor"
+        index: 0
+      -
+        actionKey: "stop_service"
+        actionType: "attacker"
+        index: 1
+      -
+        actionKey: "swift_upload_file"
+        actionType: "operation"
+        index: 2
+      -
+        actionKey: "download_swift_file"
+        actionType: "operation"
+        index: 3
+      -
+        actionKey: "check_file_exit"
+        actionType: "resultchecker"
+        index: 4
+  nodes:
+    node1: node1.LF
+    node2: node2.LF
+    node3: node3.LF
+  runner:
+    type: Duration
+    duration: 1
+  sla:
+    outage_time: 5
+    action: monitor
+
+context:
+  type: Node
+  name: LF
+  file: /etc/haverifier/pod.yaml
+
+

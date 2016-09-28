@@ -1,0 +1,50 @@
+---
+# Scenario case for rabbitmq crash
+
+schema: "yardstick:task:0.1"
+scenarios:
+  -
+    type: "general_scenario"
+    options:
+      attackers:
+        -
+          fault_type: "general-attacker"
+          key: "stop-rabbitmq"
+          host: node1
+          rollbackParameter:
+            resource: "master_p_rabbitmq-server"
+
+      monitors:
+        -
+           monitor_type: "general-monitor"
+           key: "service_status"
+           host: node1
+           monitor_time: 100
+           sla:
+             max_recover_time: 30
+           parameter:
+             serviceName: "rabbitmq-server"
+
+      steps:
+        -
+          actionKey: "stop-rabbitmq"
+          actionType: "attacker"
+          index: 2
+        -
+          actionKey: "service_status"
+          actionType: "monitor"
+          index: 1
+
+    nodes:
+      node1: node1.LF
+    runner:
+      type: Duration
+      duration: 1
+    sla:
+      outage_time: 5
+      action: monitor
+
+context:
+  type: Node
+  name: LF
+  file: /etc/haverifier/pod.yaml

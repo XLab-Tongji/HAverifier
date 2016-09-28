@@ -1,0 +1,62 @@
+---
+# case to verify the keystone service ha
+
+schema: "yardstick:task:0.1"
+scenarios:
+  -
+    type: "general_scenario"
+    options:
+      attackers:
+        -
+          fault_type: "general-attacker"
+          host: node1
+          key: "stop_service"
+          actionParameter:
+            servicename: "keystone-main"
+          rollbackParameter:
+            servicename: "keystone-main"
+      operations:
+
+        -
+           key: "create-user"
+           operation_type: "general-operation"
+           host: node1
+           actionParameter:
+             username: "testuser"
+           rollbackParameter:
+             username: "testuser"
+
+      resultCheckers:
+        -
+          key: "keystone-user-list"
+          host: node1
+          checker_type: "general-result-checker"
+          expectedValue: "testuser"
+          condition: "in"
+
+      steps:
+        -
+          actionKey: "create-user"
+          actionType: "operation"
+          index: 1
+        -
+          actionKey: "stop_service"
+          actionType: "attacker"
+          index: 2
+
+        - actionKey: "keystone-user-list"
+          actionType: "resultchecker"
+          index: 3
+    nodes:
+      node1: node1.LF
+    runner:
+      type: Duration
+      duration: 1
+    sla:
+      outage_time: 5
+      action: monitor
+
+context:
+  type: Node
+  name: LF
+  file: /etc/haverifier/pod.yaml

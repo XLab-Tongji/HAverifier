@@ -1,0 +1,6 @@
+---
+# http config file for ha test
+#
+schema: "yardstick:task:0.1"
+
+server_action: servers/{server_id}/action

@@ -1,0 +1,66 @@
+---
+# make disk io block to see the statues of rabbitmq
+
+schema: "yardstick:task:0.1"
+scenarios:
+  -
+    type: "general_scenario"
+    options:
+      attackers:
+        -
+          fault_type: "general-attacker"
+          host: node1
+          key: "block-io"
+
+      monitors:
+        -
+           monitor_type: "general-monitor"
+           key: "monitor_001"
+           host: node1
+           monitor_time: 10
+           sla:
+             max_recover_time: 5
+      operations:
+        -
+           key: "operation_001"
+           operation_type: "nova-create-flavor"
+           host: node1
+           parameter:
+             flavorid: "test-001"
+             flavorname: "test"
+             ram: 100
+             disk: 1
+             vcpus: 1
+      resultCheckers:
+        -
+          key: "resultChecker_001"
+          host: node1
+          checker_type: "nova-flavor-checker"
+          expectedValue: "test-001"
+          condition: "in"
+      steps:
+        -
+          actionKey: "block-io"
+          actionType: "attacker"
+          index: 1
+        -
+          actionKey: "operation_001"
+          actionType: "operation"
+          index: 2
+
+        - actionKey: "resultChecker_001"
+          actionType: "resultchecker"
+          index: 3
+    nodes:
+      node1: node1.LF
+    runner:
+      type: Duration
+      duration: 1
+    sla:
+      outage_time: 5
+      action: monitor
+
+context:
+  type: Node
+  name: LF
+  file: /etc/haverifier/pod.yaml

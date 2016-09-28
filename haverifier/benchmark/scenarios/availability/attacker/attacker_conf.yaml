@@ -1,0 +1,49 @@
+---
+# sample config file for ha test
+#
+schema: "yardstick:task:0.1"
+
+kill-process:
+ inject_script: scripts/stop_service.bash
+ recovery_script: scripts/start_service.bash
+ check_script: scripts/check_service.bash
+
+kill-sub-process:
+ inject_script: scripts/case-kill-process/kill_process.bash
+ recovery_script: scripts/start_service.bash
+ check_script: scripts/check_service.bash
+
+kill-main-process:
+ inject_script: scripts/case-kill-process/kill_mainProcess.bash
+ recovery_script: scripts/start_service.bash
+ check_script: scripts/check_service.bash
+
+remove-configfile:
+ inject_script: scripts/case-remove-conf/remove_conf.bash
+ recovery_script: scripts/case-remove-conf/recover_conf.bash
+ check_script: scripts/check_service.bash
+
+stopRemove-configfile:
+ inject_script: scripts/case-remove-conf/stopRemove_conf.bash
+ recovery_script: scripts/case-remove-conf/recover_conf.bash
+ check_script: scripts/check_service.bash
+
+chmod-configfile:
+ inject_script: scripts/case-change-conf-permission-mode/chmod_conf.bash
+ recovery_script: scripts/case-change-conf-permission-mode/recover_chmod_config.bash
+ check_script: scripts/check_service.bash
+
+change-configfile:
+ inject_script: scripts/case-change-conf-file-content/case_change_conf_file.bash
+ recovery_script: scripts/case-change-conf-file-content/recover_change_conf_file.bash
+ check_script: scripts/case-change-conf-file-content/check_script.bash
+
+change-env:
+ inject_script: scripts/case-change-env/change.bash
+ recovery_script: scripts/case-change-env/recover.bash
+ check_script: scripts/case-change-env/check.bash
+
+blocking-port:
+  inject_script: ha_tools/network/close_port.bash
+  recovery_script: ha_tools/network/open_port.bash
+  check_script: ha_tools/network/check_port.bash

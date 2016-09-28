@@ -1,0 +1,81 @@
+---
+# Scenario case for nova config file permission
+
+schema: "yardstick:task:0.1"
+scenarios:
+  -
+    type: "general_scenario"
+    options:
+      attackers:
+        -
+          fault_type: "general-attacker"
+          host: node1
+          key: "stop_service"
+          actionParameter:
+             servicename: "nova-api"
+          rollbackParameter:
+             servicename: "nova-api"
+
+      operations:
+        -
+           key: "file-change-permission"
+           operation_type: "general-operation"
+           host: node1
+           actionParameter:
+              filepath: /etc/nova/nova.conf
+           rollbackParameter:
+              filepath: /etc/nova/nova.conf
+        -
+           key: "service-restart"
+           operation_type: "general-operation"
+           host: node1
+           actionParameter:
+              servicename: "nova-api"
+           rollbackParameter:
+              servicename: "nova-api"
+             
+      resultCheckers:
+        -
+          key: "file-permission-checker"
+          host: node1
+          checker_type: "general-result-checker"
+          expectedValue: "-w-"
+          condition: "in"
+          parameter:
+            filepath: /etc/nova
+            filename: nova.conf
+          
+
+      steps:
+        -
+          actionKey: stop_service
+          actionType: "attacker"
+          index: 1
+        -
+          actionKey: file-change-permission
+          actionType: "operation"
+          index: 2
+
+        -
+          actionKey: service-restart
+          actionType: "operation"
+          index: 3
+        -
+
+          actionKey:  "file-permission-checker"
+          actionType: "resultchecker"
+          index: 4
+
+    nodes:
+      node1: node1.LF
+    runner:
+      type: Duration
+      duration: 1
+    sla:
+      outage_time: 5
+      action: monitor
+
+context:
+  type: Node
+  name: LF
+  file: /etc/haverifier/pod.yaml

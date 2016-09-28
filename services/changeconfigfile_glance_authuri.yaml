@@ -1,0 +1,36 @@
+---
+# Sample test case for ha- remove configure files
+
+schema: "yardstick:task:0.1"
+
+scenarios:
+-
+  type: ServiceHA
+  options:
+    attackers:
+    - fault_type: "change-configfile"
+      conf_name: "/etc/glance/glance.conf"
+      match_content_to_modify: "auth_uri = http://192.168.0.2:5000/"
+      content_to_modify: "auth_uri = http://111.111.5.1:0001/"
+      host: node1
+    monitors:
+    - monitor_type: "openstack-cmd"
+      command_name: "glance image-list"
+      monitor_time: 10
+      sla:
+        max_outage_time: 5
+  nodes:
+    node1: node1.LF
+  runner:
+    type: Duration
+    duration: 1
+  sla:
+    outage_time: 5
+    action: monitor
+
+context:
+  type: Node
+  name: LF
+  file: /etc/haverifier/pod.yaml
+
+

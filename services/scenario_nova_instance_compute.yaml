@@ -1,0 +1,67 @@
+---
+# Scenario case for stop nova compute service and create instance
+
+schema: "yardstick:task:0.1"
+scenarios:
+  -
+    type: "general_scenario"
+    options:
+      attackers:
+        -
+          fault_type: "general-attacker"
+          host: node5
+          key: "stop_service"
+          actionParameter:
+            processName: "nova-compute"
+          rollbackParameter:
+            processName: "nova-compute"
+
+      operations:
+        -
+           key: "nova-create-instance"
+           operation_type: "general-operation"
+           host: node1
+           actionParameter:
+             flavorname: "m1.micro"
+             imagename: "TestVM"
+             netID: 68ec05de-43b7-45e3-bcf5-da5318a9dad4
+             instancename: "test-001"
+           rollbackParameter:
+             instancename: "test-001"
+      resultCheckers:
+        -
+          key: "nova-instance-checker"
+          host: node1
+          checker_type: "general-result-checker"
+          expectedValue: "test-001"
+          condition: "in"
+
+      steps:
+        -
+          actionKey: nova-create-instance
+          actionType: "operation"
+          index: 0
+
+        -
+          actionKey: stop_service
+          actionType: "attacker"
+          index: 1
+        -
+          actionKey: nova-instance-checker
+          actionType: "resultchecker"
+          index: 2
+
+    nodes:
+      node5: node5.LF
+      node1: node1.LF
+    runner:
+      type: Duration
+      duration: 1
+    sla:
+      outage_time: 5
+      action: monitor
+
+context:
+  type: Node
+  name: LF
+  file: /etc/haverifier/pod.yaml

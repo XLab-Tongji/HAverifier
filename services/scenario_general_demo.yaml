@@ -1,0 +1,73 @@
+---
+# Sample test case for ha- remove configure files
+
+schema: "yardstick:task:0.1"
+scenarios:
+  -
+    type: "general_scenario"
+    options:
+      attackers:
+        -
+          fault_type: "general-attacker"
+          host: node1
+          key: "stop_service"
+          parameter:
+            processName: "nova-api"
+
+      monitors:
+        -
+           monitor_type: "general-monitor"
+           key: "monitor_001"
+           host: node1
+           monitor_time: 10
+           sla:
+             max_recover_time: 5
+
+      resultCheckers:
+        -
+          key: "resultChecker_001"
+          host: node1
+          checker_type: "general-result-checker"
+          expectedValue: 1
+          condition: "eq"
+          parameter:
+            processName: "nova-api"
+        -
+          key: "resultChecker_002"
+          host: node1
+          checker_type: "general-result-checker"
+          expectedValue: "stop"
+          condition: "in"
+          parameter:
+            processName: "nova-api"
+
+      steps:
+        -
+          actionKey: "resultChecker_001"
+          actionType: "resultchecker"
+          index: 1
+        -
+          actionKey: "stop_service"
+          actionType: "attacker"
+          index: 2
+        -
+          actionKey: "resultChecker_002"
+          actionType: "resultchecker"
+          index: 3
+        -
+          actionKey: "monitor_001"
+          actionType: "monitor"
+          index: 4
+    nodes:
+      node1: node1.LF
+    runner:
+      type: Duration
+      duration: 1
+    sla:
+      outage_time: 5
+      action: monitor
+
+context:
+  type: Node
+  name: LF
+  file: /etc/haverifier/pod.yaml

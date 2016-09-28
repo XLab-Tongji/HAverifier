@@ -1,0 +1,67 @@
+---
+# Scenario case for cinder create volume 
+
+schema: "yardstick:task:0.1"
+scenarios:
+  -
+    type: "general_scenario"
+    options:
+      attackers:
+        -
+          fault_type: "general-attacker"
+          host: node2
+          key: "stop_service"
+          actionParameter:
+            processName: "ceph"
+          rollbackParameter:
+            processName: "ceph"
+
+      operations:
+        -
+           key: "cinder-create-volume"
+           operation_type: "cinder-create-volume"
+           host: node2
+           actionParameter:
+             volumename: "test"
+             volumesize: "10"
+           rollbackParameter:
+             volumename: "test"
+           returnValue:
+             volumeID: "@_@volumeID1"
+
+      resultCheckers:
+        -
+          key: "ceph-volume-list"
+          host: node1
+          checker_type: "general-result-checker"
+          expectedValue: "@_@volumeID1"
+          condition: "in"
+
+      steps:
+        -
+          actionKey: cinder-create-volume
+          actionType: "operation"
+          index: 0
+        -
+          actionKey: stop_service
+          actionType: "attacker"
+          index: 1
+        -
+          actionKey: ceph-volume-list
+          actionType: "resultchecker"
+          index: 2
+
+    nodes:
+      node1: node1.LF
+      node2: node2.LF
+    runner:
+      type: Duration
+      duration: 1
+    sla:
+      outage_time: 5
+      action: monitor
+
+context:
+  type: Node
+  name: LF
+  file: /etc/haverifier/pod.yaml

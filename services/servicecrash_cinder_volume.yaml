@@ -1,0 +1,64 @@
+---
+# Scenario case for cinder create volume and stop cinder-volume
+
+schema: "yardstick:task:0.1"
+scenarios:
+  -
+    type: "general_scenario"
+    options:
+      attackers:
+        -
+          fault_type: "general-attacker"
+          host: node1
+          key: "stop_service"
+          actionParameter:
+            processName: "cinder-volume"
+            
+
+      operations:
+        -
+           key: "cinder-create-volume"
+           operation_type: "general-operation"
+           host: node1
+           actionParameter:
+             volumename: "test"
+             volumesize: "10"
+           rollbackParameter:
+             volumename: "test"
+
+      resultCheckers:
+        -
+          key: "cinder-volume-list"
+          host: node1
+          checker_type: "general-result-checker"
+          expectedValue: "test"
+          condition: "in"
+
+      steps:
+        -
+          actionKey: cinder-create-volume
+          actionType: "operation"
+          index: 1
+
+        -
+          actionKey: stop_service
+          actionType: "attacker"
+          index: 0
+        -
+          actionKey:  cinder-volume-list
+          actionType: "resultchecker"
+          index: 2
+
+    nodes:
+      node1: node2.LF
+    runner:
+      type: Duration
+      duration: 1
+    sla:
+      outage_time: 5
+      action: monitor
+
+context:
+  type: Node
+  name: LF
+  file: /etc/haverifier/pod.yaml

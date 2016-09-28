@@ -1,0 +1,36 @@
+---
+# Scenario case for nova flavour consisitency
+
+schema: "yardstick:task:0.1"
+scenarios:
+  -
+    type: "general_scenario"
+    options:
+
+      operations:
+        -
+           key: "operation_001"
+           operation_type: "nova-create-floatingip"
+           host: node1
+           parameter:
+             network: "admin_floating_net"
+
+      steps:
+        -
+          actionKey: operation_001
+          actionType: "operation"
+          index: 0
+
+    nodes:
+      node1: node1.LF
+    runner:
+      type: Duration
+      duration: 1
+    sla:
+      outage_time: 5
+      action: monitor
+
+context:
+  type: Node
+  name: LF
+  file: /etc/haverifier/pod.yaml

@@ -1,0 +1,39 @@
+---
+# sample config file for ha test
+#
+schema: "yardstick:task:0.1"
+
+process-exist:
+  monitor_script: ha_tools/check_process_python.bash
+monitor_001:
+  monitor_script: ha_tools/nova/nova_image_list.bash
+swift_status:
+  monitor_script: ha_tools/swift/status.bash
+write_status:
+  monitor_script: ha_tools/check_write_status.bash
+swift-upload-monitor:
+  monitor_script: ha_tools/swift/upload.bash
+pacemaker_resource_status:
+  monitor_script: ha_tools/pacemaker/resource_status.bash
+service_status:
+  monitor_script: ha_tools/check_service.bash
+ip_status:
+  monitor_script: ha_tools/network/ping.bash
+node_status_assert:
+  monitor_script: ha_tools/pacemaker/node_status_assert.bash
+conntrackd_check:
+  monitor_script: ha_tools/conntrack/conntrackd.bash
+cluster_dc_check:
+  monitor_script: ha_tools/pacemaker/DC_exist.bash
+neutron_monitor:
+  monitor_script: ha_tools/neutron/neutron_agent_list.bash
+keystone_monitor:
+  monitor_script: ha_tools/keystone/keystone_user_list.bash
+glance_monitor:
+  monitor_script: ha_tools/glance/image_list.bash
+nova-list:
+  monitor_script: ha_tools/nova/show_instances.bash
+cinder_monitor:
+  monitor_script: ha_tools/cinder/volume_list.bash
+ceph_monitor:
+  monitor_script: ha_tools/ceph/ceph_osd_tree.bash
